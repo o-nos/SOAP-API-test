@@ -8,32 +8,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.snos.soaplibtest.soap.Login;
-import com.snos.soaplibtest.soap.LoginResponse;
-import com.snos.soaplibtest.soap.MagentoApi;
-import com.snos.soaplibtest.soap.RequestEnvelope;
-import com.snos.soaplibtest.soap.RequestLogInBody;
-import com.snos.soaplibtest.soap.SignInRequest;
-import com.snos.soaplibtest.soap.SignInRequestBody;
-import com.snos.soaplibtest.soap.SignInRequestEnvelope;
-import com.snos.soaplibtest.soap.SignInResponse;
-import com.squareup.okhttp.OkHttpClient;
+import com.snos.soaplibtest.soap.SOAPRequestManager;
+import com.snos.soaplibtest.soap.emailsignup.SignUpWithEmailResponse;
+import com.snos.soaplibtest.soap.login.LoginResponse;
+import com.snos.soaplibtest.soap.signin.SignInResponse;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.convert.AnnotationStrategy;
-import org.simpleframework.xml.core.Persister;
-import org.simpleframework.xml.strategy.Strategy;
 
 import retrofit.Callback;
-import retrofit.RestAdapter;
 import retrofit.RetrofitError;
-import retrofit.client.OkClient;
 import retrofit.client.Response;
-import retrofit.converter.SimpleXMLConverter;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -46,18 +33,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mSendLoginRequestButton;
     private Button mSendRequestButton;
     private Button mSendSignInRequestButton;
+    private Button mSendSignUpWithEmailRequestButton;
     private TextView mLoginResponseText;
     private TextView mResponseText;
     private TextView mSignInResponseText;
+    private TextView mSignUpWithEmailResponseText;
 
     private String mSessionId;
     private String mUsername = "farapp";
     private String mApiKey = "qruo5rZkLyu22";
     private String mMobileSecret = "aa123123";
-    private String mEndpoint = "http://dev.thefirefly.com/index.php/api/v2_soap/?wsdl";
+
 
     private Callback<LoginResponse> loginResponseCallback;
     private Callback<SignInResponse> signInResponseCallback;
+    private Callback<SignUpWithEmailResponse> signUpWithEmailResponseCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +65,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSendSignInRequestButton = (Button) findViewById(R.id.send_signin_request);
         mSignInResponseText = (TextView) findViewById(R.id.signin_response_text);
         mSendSignInRequestButton.setOnClickListener(this);
+
+        mSendSignUpWithEmailRequestButton = (Button) findViewById(R.id.send_signup_with_email_request);
+        mSignUpWithEmailResponseText = (TextView) findViewById(R.id.signup_with_email_response_text);
+        mSendSignUpWithEmailRequestButton.setOnClickListener(this);
 
         loginResponseCallback = new Callback<LoginResponse>() {
             @Override
@@ -109,6 +103,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.e(TAG, error.getCause().getMessage());
             }
         };
+
+        signUpWithEmailResponseCallback = new Callback<SignUpWithEmailResponse>() {
+            @Override
+            public void success(SignUpWithEmailResponse respEnv, Response response) {
+                if (respEnv.getErrorCode() != null && !respEnv.getErrorCode().isEmpty()) {
+                    Log.e(TAG, "api error status code: " + respEnv.getErrorCode() + " " + respEnv.getErrorText());
+                } else {
+                    Log.i(TAG, "success! " + respEnv.getResult());
+                    mSignInResponseText.setText(respEnv.getResult());
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e(TAG, "Error occurred. Status code: " + error.getResponse().getStatus());
+                Log.e(TAG, error.getCause().getMessage());
+            }
+        };
     }
 
 
@@ -120,60 +132,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new LogInTask().execute();
                 break;
             case R.id.send_request:
-                retrofitLoginRequest();
+                SOAPRequestManager.retrofitLoginRequest(mUsername, mApiKey, loginResponseCallback);
                 break;
             case R.id.send_signin_request:
                 // $result = $session->fireflyCustomerSignIn($sessionId, 'aa@example.com', '123123', 'aa123123');
-                retrofitSignInRequest();
+                SOAPRequestManager.retrofitSignInRequest(mSessionId, mMobileSecret, signInResponseCallback);
+                break;
+            case R.id.send_signup_with_email_request:
+//                fireflyCustomerSignUpWithEmail(string sessionId, string email, string mobileSecret)
+                SOAPRequestManager.retrofitSignUpWithEmailRequest(mSessionId, mMobileSecret, signUpWithEmailResponseCallback);
                 break;
         }
-    }
-
-    private void retrofitSignInRequest() {
-        //input message
-        SignInRequest signInRequest = new SignInRequest(mSessionId, "aa@example.com", "123123", mMobileSecret);
-
-        SignInRequestBody body = new SignInRequestBody();
-        body.setObject(signInRequest);
-        SignInRequestEnvelope request = new SignInRequestEnvelope();
-        request.setBody(body);
-
-        RestAdapter restAdapter = getRestAdapter();
-        MagentoApi api = restAdapter.create(MagentoApi.class);
-
-        api.requestSignIn(request, signInResponseCallback);
-    }
-
-    private void retrofitLoginRequest() {
-        //input message
-        Login login = new Login();
-        login.setUsername(mUsername);
-        login.setApiKey(mApiKey);
-
-        RequestLogInBody body = new RequestLogInBody();
-        body.setObject(login);
-        RequestEnvelope request = new RequestEnvelope();
-        request.setBody(body);
-
-        RestAdapter restAdapter = getRestAdapter();
-        MagentoApi api = restAdapter.create(MagentoApi.class);
-
-        api.requestLoginOp(request, loginResponseCallback);
-    }
-
-    public RestAdapter getRestAdapter() {
-        Strategy strategy = new AnnotationStrategy();
-        Serializer serializer = new Persister(strategy);
-
-        OkHttpClient okHttpClient = new OkHttpClient();
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(mEndpoint)
-                .setClient(new OkClient(okHttpClient))
-                .setConverter(new SimpleXMLConverter(serializer))
-                .setLogLevel(RestAdapter.LogLevel.FULL)
-                .build();
-
-        return restAdapter;
     }
 
 
