@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.snos.soaplibtest.MainActivity">
+
+    <Button
+        android:id="@+id/send_login_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Login request" />
+
+    <TextView
+        android:id="@+id/login_response_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:text="Session id" />
+
+    <Button
+        android:id="@+id/send_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Retrofit login request" />
+
+    <TextView
+        android:id="@+id/response_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:text="sessionId" />
+
+    <Button
+        android:id="@+id/send_signin_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Retrofit sign in request" />
+
+    <TextView
+        android:id="@+id/signin_response_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:text="Sign in responce" />
+</LinearLayout>
