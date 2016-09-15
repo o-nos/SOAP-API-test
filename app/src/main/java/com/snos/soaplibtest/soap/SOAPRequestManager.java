@@ -30,12 +30,15 @@ import retrofit.converter.SimpleXMLConverter;
 public class SOAPRequestManager {
 
     private static String mEndpoint = "http://dev.thefirefly.com/index.php/api/v2_soap/?wsdl";
+    private static String mApiKey = "qruo5rZkLyu22";
+    private static String mMobileSecret = "aa123123";
+    private static String mUsername = "farapp";
 
-    public static void retrofitLoginRequest(String username, String apiKey, Callback<LoginResponse> loginResponseCallback) {
+    public static void retrofitLoginRequest(Callback<LoginResponse> loginResponseCallback) {
 
         LoginRequest login = new LoginRequest();
-        login.setUsername(username);
-        login.setApiKey(apiKey);
+        login.setUsername(mUsername);
+        login.setApiKey(mApiKey);
 
         LoginRequestBody body = new LoginRequestBody();
         body.setObject(login);
@@ -48,9 +51,9 @@ public class SOAPRequestManager {
         api.requestLogin(request, loginResponseCallback);
     }
 
-    public static void retrofitSignInRequest(String sessionId, String mobileSecret, Callback<SignInResponse> signInResponseCallback) {
+    public static void retrofitSignInRequest(String sessionId, Callback<SignInResponse> signInResponseCallback) {
 
-        SignInRequest signInRequest = new SignInRequest(sessionId, "aa@example.com", "123123", mobileSecret);
+        SignInRequest signInRequest = new SignInRequest(sessionId, "aa@example.com", "123123", mMobileSecret);
 
         SignInRequestBody body = new SignInRequestBody();
         body.setObject(signInRequest);
@@ -63,9 +66,9 @@ public class SOAPRequestManager {
         api.requestSignIn(request, signInResponseCallback);
     }
 
-    public static void retrofitSignUpWithEmailRequest(String sessionId, String mobileSecret, Callback<SignUpWithEmailResponse> signUpCallback) {
+    public static void retrofitSignUpWithEmailRequest(String sessionId, Callback<SignUpWithEmailResponse> signUpCallback) {
 
-        SignUpWithEmailRequest signUpWithEmailRequest = new SignUpWithEmailRequest(sessionId, "aa@example.com", mobileSecret);
+        SignUpWithEmailRequest signUpWithEmailRequest = new SignUpWithEmailRequest(sessionId, "aa@example.com", mMobileSecret);
 
         SignUpWithEmailRequestBody requestBody = new SignUpWithEmailRequestBody();
         requestBody.setObject(signUpWithEmailRequest);
@@ -93,7 +96,6 @@ public class SOAPRequestManager {
 
         return restAdapter;
     }
-
 
 
 }

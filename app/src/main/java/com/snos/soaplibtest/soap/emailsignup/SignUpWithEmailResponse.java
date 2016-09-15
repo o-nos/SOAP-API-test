@@ -16,6 +16,14 @@ public class SignUpWithEmailResponse {
     @Path("Body/fireflyCustomerSignUpWithEmailResponse")
     private String result;
 
+    @Element(name = "Value", required = false)
+    @Path("Body/Fault/Code")
+    private String errorCode;
+
+    @Element(name = "Text", required = false)
+    @Path("Body/Fault/Reason")
+    private String errorText;
+
     public String getResult() {
         return result;
     }
@@ -39,14 +47,6 @@ public class SignUpWithEmailResponse {
     public void setErrorText(String errorText) {
         this.errorText = errorText;
     }
-
-    @Element(name = "Value", required = false)
-    @Path("Body/Fault/Code")
-    private String errorCode;
-
-    @Element(name = "Text", required = false)
-    @Path("Body/Fault/Reason")
-    private String errorText;
 
 
 }

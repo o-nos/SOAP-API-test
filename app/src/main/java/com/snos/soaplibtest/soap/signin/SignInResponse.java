@@ -1,6 +1,6 @@
 package com.snos.soaplibtest.soap.signin;
 
-import com.snos.soaplibtest.FireflyCustomer;
+import com.snos.soaplibtest.soap.FireflyCustomer;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Path;

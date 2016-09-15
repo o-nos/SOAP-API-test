@@ -15,6 +15,14 @@ public class LoginResponse {
     @Path("Body/loginResponse")
     private String loginReturn;
 
+    @Element(name = "Value", required = false)
+    @Path("Body/Fault/Code")
+    private String errorCode;
+
+    @Element(name = "Text", required = false)
+    @Path("Body/Fault/Reason")
+    private String errorText;
+
     public String getLoginReturn() {
         return loginReturn;
     }
@@ -22,4 +30,22 @@ public class LoginResponse {
     public void setLoginReturn(String loginReturn) {
         this.loginReturn = loginReturn;
     }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorText() {
+        return errorText;
+    }
+
+    public void setErrorText(String errorText) {
+        this.errorText = errorText;
+    }
+
+
 }
